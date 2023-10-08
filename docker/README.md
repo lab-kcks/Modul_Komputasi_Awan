@@ -56,6 +56,7 @@ Saat menggunakan perintah `docker pull` atau `docker run`, Docker melakukan pull
 <br>
 
 **Docker Objects**
+
 Dcoker Object merupakan komponen-komponen yang terdapat pada Docker. Docker Object dapat meliputi image, container, network, volume, dan objek lainnya.
 
 ### B.3 Instalasi Docker
