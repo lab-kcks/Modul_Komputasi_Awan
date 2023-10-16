@@ -83,27 +83,28 @@ Docker Object merupakan komponen-komponen pada docker, seperti image, container,
 
 ## C. Docker Image
 
-Docker Image adalah *read-only template* yang berisi intruksi untuk membuat Docker Container. Image dapat dibuat sendiri menggunakan Dockerfile atau mengambil milik orang lain di Docker Hub atau bahkan memodifikasinya. Di dalam Docker Image berisi aplikasi dan *dependencies*. Sebelum menjalankan aplikasi di Docker, pastikan terlebih dahulu memiliki Docker Image aplikasi tersebut.
+Docker Image adalah *read-only template* yang berisi instruksi untuk membuat Docker Container. Image berisi intruksi untuk menjalankan aplikasi bersama dengan konfigurasi yang diperlukan. Image dapat mengambil milik orang lain di Docker Hub atau dapat dibuat sendiri menggunakan Dockerfile. Pastikan mempunyai Image aplikasi sebelum aplikasi tersebut dijalankan di Docker.
 
 ### Perintah Docker Image
 
-Berikut beberapa perintah pada Docker Image.
+Berikut beberapa perintah pada Docker Image untuk mengelola image.
 
 > Penggunaan: `docker image COMMAND`
 
 | Perintah  | Keterangan |
 | --- | --- |
-| `build` | Untuk membuat image dari Dockerfile |
-| `history` | Untuk melihat history image |
-| `import` | Untuk import image dari sebuah file |
-| `inspect` | Untuk melihat informasi detail dari satu atau lebih image |
-| `load` | Untuk memuat image dari sebuah arsip yang telah disimpan |
-| `ls` | Untuk melihat daftar image yang telah terunduh  |
+| `build` | Untuk membuat sebuah image dari sebuah Dockerfile |
+| `history` | Untuk melihat history sebuah image |
+| `import` | Untuk import image untuk membuat sebuah filesystem image |
+| `inspect` | Untuk melihat informasi detail dari satu atau beberapa image |
+| `load` | Untuk memuat image dari sebuah tar arsip atau STDIN |
+| `ls` | Untuk melihat daftar image |
 | `prune` | Untuk menghapus image yang tidak digunakan |
-| `pull` | Untuk mengunduh image dari Registry |
-| `push` | Untuk mengunggah image ke Regisry |
-| `rm` | Untuk menghapus satu atau lebih image |
-| `save` | Untuk menyimpan satu atau lebih image ke dalam sebuah arsip |
+| `pull` | Untuk mengunduh image dari registry |
+| `push` | Untuk mengunggah image ke regisry |
+| `rm` | Untuk menghapus satu atau beberapa image |
+| `save` | Untuk menyimpan satu atau lebih image ke dalam sebuah tar arsip |
+| `tag` | Untuk membuat sebuah tag TARGET_IMAGE yang merujuk ke SOURCE_CODE |
 
 Contoh:
 
@@ -126,31 +127,31 @@ docker pull httpd
 
 ## D. Docker Container
 
-Docker Container adalah instance image yang dijalankan. Container berisi aplikasi dan dependensinya, dimana setiap container terisolasi dengan host maupun container lainnya. Container dapat berjalan pada berbagai *environment* meskipun memiliki perbedaan infrastruktur dan konfigurasinya. Anda dapat membuat, menjalankan, menghentikan, memindahkan, atau menghapus kontainer menggunakan Docker API atau CLI. Selain itu, juga dapat menyambungkan container ke asdsatu atau beberapa jaringan, melampirkan penyimpanan ke container tersebut. Docker Contaoner mempermudah dalam mengelola dan menjalankan aplikasi lintas *environment* tanpa harus mengkhawatirkan masalah konfigurasi dan dependensinya.
+Docker Container adalah instance image yang dijalankan. Container berisi aplikasi dan dependensinya. dimana setiap container terisolasi dengan host maupun container lainnya. Setiap container berjalan dalam lingkungan yang terisolasi dengan container lainnya dan dari host sistem operasi. Container berbagi dengan kernel host, yang membuat mereka sangat efisien dalam penggunaan sumber daya dan cepat dalam menjalankannya. Container Docker juga memiliki tingkat portabilitas yang tinggi, memungkinkan pengguna untuk membuat container dalam lingkungan pengembangan dan dengan mudah menjalankannya dalam lingkungan produksi dengan cara yang konsisten.
 
 ### Perintah Docker Container
 
-Berikut beberapa perintah pada Docker Container.
+Berikut beberapa perintah pada Docker Container untuk mengelola container.
 
 > Penggunaan: `docker container COMMAND`
 
 | Perintah | Keterangan |
 | --- | --- |
-| `attach` | Untuk masuk pada terminal container sehingga dapat menjalan perintah pada container yang sedang aktif |
+| `attach` | Untuk masuk pada terminal container yang sedang berjalan |
 | `commit` | Untuk membuat image baru dari perubahan sebuah container |
 | `cp` | Untuk menyalin file/folder antara file sistem host dan file sistem container |
 | `create` | Untuk membuat container baru |
 | `diff` | Untuk memeriksa perubahan pada file atau direktori di file sistem container |
 | `exec` | Untuk menjalankan perintah dalam container yang sedang berjalan |
-| `export` | Untuk mengekspor container sebagai arsip tar |
+| `export` | Untuk mengekspor container file sebagai arsip tar |
 | `inspect` | Untuk menampilkan informasi detail pada satu atau beberapa container |
-| `kill` | Untuk menghentikan satu atau lebih kontainer yang sedang berjalan secara paksa |
+| `kill` | Untuk menghentikan satu atau beberapa kontainer yang sedang berjalan secara paksa |
 | `logs` | Untuk mengambil log dari sebuah container |
 | `ls` | Untuk melihat daftar container yang sedang berjalan |
-| `pause` | Untuk menghentikan sementara semua proses pada satu container atau lebih |
-| `port` | Untuk melihat pemetaan port atau pemetaan spesifik pada container |
+| `pause` | Untuk menghentikan sementara semua proses pada satu atau beberapa container |
+| `port` | Untuk melihat daftar pemetaan port atau pemetaan spesifik pada container |
 | `prune` | Untuk menghapus semua container yang tidak berjalan |
-| `rename` | Untuk mengganti nama container |
+| `rename` | Untuk mengubah nama container |
 | `restart` | Untuk memulai ulang satu atau beberapa container |
 | `rm` | Untuk menghapus satu atau beberapa container |
 | `run` | Untuk membuat dan menjalankan container baru dari sebuah image |
@@ -158,9 +159,9 @@ Berikut beberapa perintah pada Docker Container.
 | `stats` | Untuk menampilkan informasi statistik penggunaan sumber daya container |
 | `stop` | Untuk menghentikan satu atau beberapa container yang sedang berjalan |
 | `top` | Untuk menampilkan proses yang sedang berjalan dari sebuah container |
-| `unpause` | Untuk meneruskan proses pada satu container atau lebih yang telah dijeda |
+| `unpause` | Untuk meneruskan proses pada satu atau beberapa container yang sebelumnya dihentikan sementara |
 | `update` | Untuk memperbarui konfigurasi satu atau beberapa container |
-| `wait` | Untuk menunggu container selesai menjalankan sebuah perintah sebelum melanjutkannya |
+| `wait` | untuk menunggu sampai suatu kontainer selesai berjalan dan kemudian mengembalikan kode keluaran (exit code) dari kontainer tersebut |
 
 Contoh:
 
@@ -202,7 +203,7 @@ docker run --name tka -p 9000:80 -d httpd
 
 ## E. Docker Volume
 
-Docker tidak menyimpan state atau data apapun di dalam container. Sehingga apabila container mati kemudian dinyalakan lagi maka state akan kembali seperti semula. Semua perubahan tidak tersimpan, berbeda dengan virtual mesin yang menyimpan data dan state. Untuk mengatasi hal tersebut, docker memiliki fungsi volume untuk menyimpan perubahan data pada komputer hostnya. Sehingga ketika kontainer mati atau dihapus, data tetap tersimpan di komputer host dan dapat digunakan kembali oleh kontainer yang sama atau berbeda. Untuk mengaktifkan eksternal volume ikuti langkah-langkah berikut:
+Docker volume adalah sebuah mekanisme dalam Docker yang digunakan untuk menyimpan dan mengelola data persisten yang digunakan oleh container. Docker Volume diterapkan untuk menyimpan data atau state karena docker tidak menyimpan state. Docker Volume digunakan untuk memisahkan data yang perlu bertahan lebih lama dan harus diakses oleh satu atau beberapa kontainer dari lingkungan yang bersifat efemeral. Berikut merupakan langkah-langkah untuk mengaktifkan volume:
 
 1. Matikan dan hapus kotnainer yang telah kita buat sebelumnya.
     
@@ -243,10 +244,11 @@ Docker tidak menyimpan state atau data apapun di dalam container. Sehingga apabi
 | Perintah | Keterangan |
 | --- | --- |
 | `create` | Untuk membuat sebuah volume |
-| `inspect` | Untuk menampilkan detail informasi satu atau lebih volume |
+| `inspect` | Untuk menampilkan detail informasi satu atau beberapa volume |
 | `ls` | Untuk melihat daftar volume |
 | `prune` | Untuk menghapus volume yang tidak digunakan |
-| `rm` | Untuk menghapus satu atau lebih volume |
+| `rm` | Untuk menghapus satu atau beberapa volume |
+| `update` | Untuk melakukan update volume |
 
 Contoh:
 
@@ -257,23 +259,22 @@ docker volume create tka
 
 ## F. Dockerfile
 
-Dockerfile adalah sebuah file teks yang berisi serangkaian instruksi untuk membangun sebuah image Docker. Dockerfile digunakan untuk mendefinisikan bagaimana sebuah image Docker harus dibuat, konfigurasi kontainer, dan apa yang harus terdapat di dalam kontainer tersebut. Ketika Dockerfile dieksekusi dengan perintah **`docker build`**, Docker Engine akan membaca instruksi-instruksi dalam Dockerfile dan membangun image Docker yang sesuai.
-
+Docker dapat menghasilkan gambar secara otomatis dengan memproses instruksi yang terkandung dalam Dockerfile. Dockerfile adalah sebuah dokumen berbasis teks yang berisi serangkaian perintah yang mengarah pada pembuatan gambar Docker. Dalam Dockerfile, terdapat urutan langkah yang harus dijalankan oleh Docker Engine untuk menciptakan sebuah gambar yang dapat digunakan sebagai dasar untuk menjalankan kontainer. Dockerfile berfungsi sebagai panduan yang merincikan konfigurasi dan dependensi yang diperlukan untuk menjalankan aplikasi atau layanan dalam lingkungan kontainer.
 ### Perintah Dockerfile
 
 Berikut beberapa perintah pada Dockerfile.
 
 | Perintah  | Keterangan |
 | --- | --- |
-| `FROM` | Untuk menentukan base image yang akan digunakan |
-| `COPY` | Untuk menyalin file atau folder dari host ke dalam image. |
-| `ADD` | Untuk menyalin file atau folder dari host ke dalam image, bisa juga digunakan untuk men-download file dari URL dan mengekstraknya ke dalam image. |
-| `RUN` | Untuk menjalankan perintah pada layer yang sedang dibangun dan membuat image baru. |
-| `CMD` | Untuk menentukan perintah default yang akan dijalankan saat container di-start. |
-| `ENTRYPOINT` | Untuk menentukan perintah yang akan dijalankan saat container di-start, dapat juga di-overwrite oleh perintah saat container di-run. |
-| `ENV` | Untuk menentukan environment variable di dalam container. |
-| `EXPOSE` | Untuk menentukan port yang akan di-expose dari container ke host. |
-| `VOLUME` | Untuk menentukan direktori yang akan di-mount sebagai volume di dalam container. |
+| `FROM` | Untuk menentukan base/parent image yang akan digunakan |
+| `COPY` | Untuk menyalin file atau folder ke dalam image |
+| `ADD` | Untuk menyalin file atau folder ke dalam image |
+| `RUN` | Untuk menjalankan perintah shell di dalam gambar selama proses build |
+| `CMD` | Untuk mendefinisikan perintah default saat menjalankan container |
+| `ENTRYPOINT` | Untuk mendefinisikan perintah yang akan dijalankan (perintah inti) |
+| `ENV` | Untuk mendefinisikan environment variable |
+| `EXPOSE` | Untuk mendefinisikan port yang akan di-expose dari container ke host |
+| `VOLUME` | Untuk mendefinisikan volume yang akan digunakan container |
 
 [Penjelasan lebih lanjut](https://docs.docker.com/engine/reference/builder/)
 
@@ -333,7 +334,7 @@ Berikut beberapa perintah pada Dockerfile.
 
 ## G. Docker Compose
 
-Docker Compose merupakan sebuah alat yang digunakan untuk mendefinisikan dan menjalankan aplikasi Docker multi-container menggunakan file konfigurasi YAML. Dengan Docker Compose kita dapat menentukan Docker Image untuk setiap Docker Container, mengatur konfigurasi jaringan, menentukan volume yang dibutuhkan, dan konfigurasi lainnya. Docker Compose berjalan di semua lingkungan; *production*, *staging*, *development*, *pengujian*, serta *CI workflows*. Docker Compose juga memiliki perintah untuk mengelola seluruh siklus hidup aplikasi:
+Docker Compose merupakan tool yang digunkan untuk mendefinisikan dan menjalankan aplikasi yang terdiri dari beberapa container secara sekaligus menggunakan file YAML. Docker Compose mempermudah dalam mengelola aplikasi yang terdiri dari berbagai layanan yang harus berinteraksi satu sama lain. Docker Compose berjalan di semua lingkungan; *production*, *staging*, *development*, *pengujian*, serta *CI workflows*. Docker Compose juga memiliki perintah untuk mengelola seluruh siklus hidup aplikasi:
 
 - Start, stop, dan rebuild service.
 - Melihat status layanan yang sedang berjalan.
