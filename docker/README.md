@@ -8,27 +8,25 @@
 
 ### A.1 Virtual Machine
 
-Virtual Machine (VM) merupakan abstraksi perangkat keras fisik yang mengubah satu server menjadi banyak server. Hypervisor atau virtual machine manager memungkinkan beberapa VM dapat berjalan pada satu mesin. Setiap membuat sebuah VM, diharuskan menginstall sistem operasinya juga sehingga ukuran aplikasi menjadi besar karena tidak hanya aplikasi tetapi juga sistem operasinya. Kerugian lain VM adalah apabila membuat aplikasi yang membutuhkan banyak VM, maka akan memakan banyak *resource* (VM dapat berukuran lebih dari 1 GB).
+Virtual Machine (VM) merupakan abstraksi perangkat keras fisik yang mengubah satu server menjadi banyak server. Untuk mengatur VM dibutuhkan *virtual machine manager* atau *hypervisor*. Dengan menggunakan *hypervisor* memungkinkan untuk membagi sumber daya dan mengalokasikannya ke beberapa VM yang berbeda. Setiap kali membuat VM, diharuskan juga menginstall sistem operasinya. Hal ini akan menyebabkan ukuran aplikasi menjadi lebih besar karena di dalamnya terdapat aplikasi, dependensi beserta sistem operasinya (VM dapat berukuran lebih dari 1 GB).
 
 ### A.2 Container
 
-Container adalah abstraksi pada lapisan aplikasi yang mengemas kode dan *dependencies* secara bersamaan. Beberapa container dapat berjalan di mesin yang sama dan berbagi kernel OS dengan container lain, masing-masing berjalan sebagai proses yang terisolasi di ruang pengguna dengan menggunakan container manager. Container menggunakan lebih sedikit ruang daripada VM (*container images* biasanya berukuran puluhan MB).
-
+Container adalah abstraksi pada lapisan aplikasi yang mengemas kode dan *dependencies* secara bersamaan. Untuk mengatur container dibutuhkan *container manager*. Dengan menggunakan container memungkinkan untuk menjalankan beberapa container berjalan di mesin yang sama dan berbagu OS dengan container lainnya. Selain itu, *container manager* bertugas juga untuk melakukan isolasi pada setiap container. Dengan menggunakan container, *resource* yang dipakai lebih sedikit ketimbang menggunakan VM (container dapat berukuran puluhan MB saja).
 
 ## B. Docker
 ![docker-logo](./images/docker-logo.png)
 
 ### B.1 Apa itu Docker?
 
-Docker adalah platform *open source* untuk mengembangkan, mengirim, dan menjalankan aplikasi. Docker memungkinkan untuk memisahkan aplikasi dari infrastruktur menggunakan container sehingga dapat mengirimkan *software* lebih cepat. Container berfungsi sebagai lingkungan eksekusi terisolasi untuk menjalankan aplikasi, termasuk *source code*, *runtime*, dan *dependencies* yang diperlukan.
+Docker merupakan layanan *open-source* yang dapat mengemas serta menjalan aplikasi dengan lingkungan yang terisolasi. Dengan mengisolasi aplikasi, memungkinkan *developer* untuk menjalankan banyak container pada waktu bersamaan. Untuk mengisolasi setiap aplikasi, di docker menggunakan container. Penggunaan container juga memungkinkan *developer* untuk menjalankan aplikasi di berbagai lingkungan.
 
-Docker memungkinkan *developer* dapat membuat container portabel yang konsisten yang dapat berjalan di berbagai lingkungan komputasi, termasuk *local machine*, server cloud, atau lingkungan pengembangan dan produksi lainnya secara bersamaan. Docker membantu mengisolasi aplikasi dan *dependencies*, sehingga aplikasi dapat berjalan secara konsisten di seluruh lingkungan tanpa mengganggu sistem operasi host atau aplikasi lainnya.
 
 ### B.2 Arsitektur Docker
 
 ![docker-architecture](./images/docker-arsitektur.png)
 
-Docker menggunakan arsitektur *client-server*. Docker client menerima perintah dan mengirimkannya ke Docker daemon untuk menjalan perintah tersebut seperti *building*, *running*, dan *distributing* Docker container. Docker client dan daemon dapat berjalan pada sistem yang sama, atau Anda dapat menyambungkan Docker client ke remote Docker daemon. Docker client dan daemon berkomunikasi menggunakan REST API, melalui soket UNIX atau *network interface*. Docker client lainnya adalah Docker Compose, yang memungkinkan bekerja dengan aplikasi yang terdiri atas sekumpulan container.
+Docker menggunakan arsitektur *client-server*. Docker client bertugas menerima perintah pengguna dan mengirimkannya ke Docker daemon untuk menjalan perintah tersebut seperti *building*, *running*, dan *distributing* Docker container pengguna. Docker client dan daemon berjalan pada sistem yang sama, atau dapat menyambungkan Docker client dengan Docker daemon secara *remote*. Docker client dan daemon berkomunikasi menggunakan REST API, melalui soket UNIX atau *network interface*. Selain itu, juga terdapat Docker Compose yang memungkinkan bekerja dengan aplikasi yang terdiri atas sekumpulan container.
 
 **Docker Daemon**
 
@@ -36,7 +34,7 @@ Docker Daemon (`dockerd`) mendengarkan Docker API *requests* dan mengelola objek
 
 **Docker Client**
 
-Docker Client (`docker`) adalah interface pengguna untuk berinteraksi dengan Docker. Saat menggunakan perintah seperti `docker run`, klien mengirim perintah ini ke `dockerd`, yang menjalankannya. Perintah Docker menggunakan Docker API. Docker Client dapat berkomunikasi dengan lebih dari satu daemon.
+Docker Client (`docker`) merupakan interface pengguna untuk berinteraksi dengan Docker. Contohnya ketika pengguna memberikan input `docker run`, Docker client mengirim perintah ini ke `dockerd`, dan menjalankannya. Perintah Docker menggunakan Docker API. Docker Client dapat berkomunikasi dengan lebih dari satu daemon.
 
 **Docker Desktop**
 
@@ -44,7 +42,7 @@ Docker Desktop adalah aplikasi Docker yang dipasang pada Mac, Windows, atau Linu
 
 **Docker Registry**
 
-Docker Registry adalah tempat untuk menyimpan Docker Image. Dengan menggunakan Docker Registry, kita bisa menyimpan Image yang kita buat, dan bisa digunakan di Docker Daemon dimanapun selama bisa terkoneksi ke Docker Registry. 
+Docker Registry adalah tempat untuk menyimpan Docker Image. Dengan menggunakan Docker Registry, pengguna dapat menyimpan Image yang dibuat, dan dapat digunakan di Docker Daemon dimanapun selama terkoneksi ke Docker Registry. 
 
 Saat menggunakan perintah `docker pull` atau `docker run`, Docker melakukan pull image yang dibutuhkan dari registry yang dikonfigurasikan. Saat menggunakan perintah `docker push`, Docker melakukan push image ke registry yang telah dikonfigurasi. Berikut contoh-contoh Docker Registry:
 - [Docker Hub](https://hub.docker.com/) (default)
@@ -57,7 +55,7 @@ Saat menggunakan perintah `docker pull` atau `docker run`, Docker melakukan pull
 
 **Docker Objects**
 
-Dcoker Object merupakan komponen-komponen yang terdapat pada Docker. Docker Object dapat meliputi image, container, network, volume, dan objek lainnya.
+Docker Object merupakan komponen-komponen pada docker, seperti image, container, network, volume, plugin, dan lain-lain.
 
 ### B.3 Instalasi Docker
 
