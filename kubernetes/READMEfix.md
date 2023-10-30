@@ -7,21 +7,14 @@
 + D. [Label](#d-label)
 + E. [Anotasi](#e-anotasi)
 + F. [Menghapus Pod](#f-menghapus-pod)
-+ G. [Mengenal Apache](#g-mengenal-apache)
-+ H. [Konfigurasi Apache Sederhana](#h-konfigurasi-apache-sederhana)
-  + A. [Penggunaan Sederhana](#a-penggunaan-sederhana)
-  + B. [Membuat Konfigurasi Website Menggunakan Port 8080](#b-membuat-konfigurasi-website-menggunakan-port-8080)
-+ I. [Mari Berimajinasi](#i-mari-berimajinasi)
-  + A. [Setting Domain pada Apache](#a-setting-domain-pada-apache)
-  + B. [Directory Listing](#b-directory-listing)
-  + C. [Directory Alias](#c-directory-alias)
-  + D. [Module Rewrite](#d-module-rewrite)
-+ J. [Nginx Web Server](#4-nginx-web-server)
-  + A. [Instalasi Nginx](#a-instalasi-nginx)
-  + B. [Nginx Load Balancing](#b-load-balancing-pada-nginx)
-  + C. [Nginx Upstream](#c-upstream)
-  + D. [Reverse Proxy](#d-reverse-proxy)
-  + E. [Setup Load Balancing di Nginx](#e-setup-load-balancing-di-nginx)
++ G. [Replication dan Controller Lain](#g-replication-dan-controller-lain)
++ H. [Secrets](#h-secrets)
++ I. [Menyuntikkan Data ke dalam Aplikasi](#i-menyuntikkan-data-ke-dalam-aplikasi)
++ J. [Volume](#i-Volume)
++ K. [Rolling Update](#k-rolling-update)
++ L. [Jobs](#l-jobs)
++ M. [Scaling Aplikasi](#m-scaling-aplikasi)
++ N. [Extend Kubernetes](#n-extend-kubernetes)
 
 ## A. Apa itu Kubernetes?
 Dalam beberapa tahun terakhir, dunia pengembangan perangkat lunak telah menyaksikan pergeseran signifikan dari aplikasi monolitik tradisional ke paradigma layanan mikro, yang memungkinkan komponen aplikasi untuk dikembangkan, diterapkan, dan diskalakan secara individual, sehingga lebih responsif terhadap kebutuhan bisnis yang terus berubah. Arsitektur layanan mikro, meskipun menawarkan fleksibilitas dan skalabilitas, juga membawa tantangan baru dalam hal konfigurasi, pengawasan, dan penanganan kegagalan sistem, terutama karena peningkatan jumlah komponen dan kompleksitas pengelolaan pusat data. Kubernetes, sebuah platform orkestrasi kontainer terbuka, muncul sebagai jawaban atas tantangan ini, menyediakan mekanisme untuk mengelola dan menjadwalkan komponen aplikasi secara otomatis, serta mengoptimalkan penggunaan sumber daya dan biaya perangkat keras. Lebih lanjut, Kubernetes tidak hanya memberdayakan pengembang untuk menerapkan aplikasi dengan kebebasan dan frekuensi yang lebih besar, tetapi juga memberikan nilai tambah kepada tim operasional dengan kemampuannya untuk secara otomatis memantau, menjadwalkan ulang aplikasi, dan menangani kegagalan perangkat keras, sehingga memungkinkan fokus yang lebih besar pada pengelolaan infrastruktur Kubernetes itu sendiri dan elemen infrastruktur lainnya.
@@ -621,7 +614,7 @@ kubectl create -f nginx-pod.yaml
 ```
 
 Kubernetes sekarang memiliki dua pod dengan nama yang sama (kubia-manual). Salah satunya ada di `default`
-namespace, dan yang lainnya ada di `custom-namespace` Anda.
+namespace, dan yang lainnya ada di `custom-namespace`.
 
 Saat membuat daftar, mendeskripsikan, memodifikasi, atau menghapus objek di namespace lain, teruskan flag `--namespace (atau -n)` ke kubectl. Jika tidak menentukan namespace, kubectl akan melakukan tindakan di namespace default yang dikonfigurasi dalam konteks kubectl saat ini. Namespace konteks saat ini dan konteks saat ini sendiri dapat diubah melalui command `kubectl config`.
 
@@ -688,7 +681,7 @@ Saat menghapus sumber daya, kubectl akan mencetak nama setiap sumber daya yang d
 
 **Catatan**:- Perintah kubectl delete all --all juga menghapus service kubernetes, namun akan dibuat ulang secara otomatis dalam beberapa saat.
 
-## F. Replication dan Controller Lain
+## G. Replication dan Controller Lain
 Sejauh ini kita telah belajar cara membuat, mengawasi, dan mengelola pods secara manual. Namun dalam kasus penggunaan di dunia nyata, kita ingin agar penerapan tetap berjalan secara otomatis dan tetap sehat tanpa intervensi manual apa pun. Untuk melakukan hal ini, buat jenis sumber daya lain seperti **ReplicationControllers** atau **Deployments** yang kemudian membuat dan mengelola pod sebenarnya.
 
 Saat membuat pod yang tidak dikelola (seperti yang dibuat sebelumnya), sebuah node kluster dipilih untuk menjalankan pod tersebut dan kemudian containernya dijalankan pada node tersebut. Sekarang, kita akan mengetahui bahwa Kubernetes kemudian memantau container tersebut dan secara otomatis memulai ulang jika gagal. Namun jika seluruh node gagal, pod pada node tersebut akan hilang dan tidak akan diganti dengan yang baru, kecuali pod tersebut dikelola oleh ReplicationControllers atau sejenisnya yang telah disebutkan sebelumnya.
@@ -740,3 +733,365 @@ Deskriptor pod mendefinisikan probe liveness probe httpGet, yang memberi tahu Ku
 
 Setelah lima permintaan seperti itu (atau permintaan klien yang sebenarnya), aplikasi kita mulai mengembalikan status HTTP `kode 500`, yang akan dianggap oleh Kubernetes sebagai kegagalan probe, dan dengan demikian akan memulai ulang kontainer.
 
+## H. Secrets
+#### Memahami Secrets
+Rahasia adalah objek yang menyimpan data sensitif seperti kata sandi atau kunci API. Secret digunakan untuk menyimpan data sensitif dengan cara yang lebih aman daripada ConfigMaps biasa atau variabel lingkungan Mengelola secrets secara efektif membantu menjaga keamanan dan integritas aplikasi.
+
+Jenis-jenis Secrets
+Opaque: Data yang ditentukan pengguna secara Arbitrary.
+kubernetes.io/service-account-token: Data token untuk akun services.
+kubernetes.io/dockercfg: Berkas berseri ~/.dockercfg untuk digunakan dengan registri Docker.
+kubernetes.io/dockerconfigjson: Berkas ~/.docker/config.json yang diserialisasi.
+
+#### Membuat Secrets Secara Manual
+Buat secrets secara langsung dengan menggunakan command kubectl:
+```
+kubectl create secret generic my-secret --from-literal=key1=value1 --from-literal=key2=value2
+``` 
+#### Menggunakan Secrets di Pod
+Sebagai Variabel Environment:
+Kita dapat mengekspos data secrets ke sebuah Pod sebagai variabel lingkungan. Berikut adalah contoh bagaimana kita dapat mendefinisikannya dalam spesifikasi Pod:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-env-pod
+spec:
+  containers:
+  - name: mycontainer
+    image: myimage:latest
+    env:
+    - name: SECRET_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: my-secret
+          key: username
+    - name: SECRET_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-secret
+          key: password
+  restartPolicy: Never
+``` 
+#### Menggunakan Secrets di Volume
+Secrets juga dapat dipasang sebagai volume untuk diakses oleh container di dalam Pod. Berikut ini contohnya:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-volume-pod
+spec:
+  containers:
+  - name: mycontainer
+    image: myimage:latest
+    volumeMounts:
+    - name: secret-volume
+      mountPath: "/etc/secret-data"
+      readOnly: true
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: my-secret
+  restartPolicy: Never
+``` 
+#### Melihat Secrets
+Untuk melihat secrets yang dibuat, gunakan perintah **kubectl get secret**:
+```
+kubectl get secrets
+```
+Untuk melihat detail konten secrets tertentu (dalam format YAML), gunakan:
+```
+kubectl get secret my-secret -o yaml
+```
+
+#### Menghapus Secrets
+Jika perlu menghapus secrets, lakukan dengan perintah berikut:
+```
+kubectl delete secret my-secret
+```
+
+## I. Menyuntikkan Data ke dalam Aplikasi
+Memasukkan data ke dalam aplikasi di Kubernetes dapat dilakukan dengan menggunakan berbagai objek seperti ConfigMaps dan Secrets. Bagian ini akan memandu proses pembuatan, pengelolaan, dan penggunaan objek untuk memasukkan data ke dalam aplikasi.
+
+#### Memahami ConfigMap
+ConfigMap adalah objek API yang digunakan untuk menyimpan data non-rahasia dalam pasangan nilai kunci. Ini memungkinkan kita untuk memisahkan konfigurasi khusus lingkungan dari image container, sehingga membuat aplikasi lebih portabel.
+
+Use Case ConfigMaps
+Menyimpan file konfigurasi.
+Menetapkan variabel environment untuk container.
+Mengkonfigurasikan argumen command-line untuk aplikasi.
+
+#### Membuat dan Menggunakan ConfigMaps
+Berikut isi file yaml yang bisa digunakan untuk membuat suatu ConfigMap:
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap
+data:
+  mykey: mydata
+  anotherkey: anotherdata
+```
+
+#### Menggunakan ConfigMaps di Pod
+Untuk menggunakan ConfigMap, sebuah Pod perlu mereferensikan ConfigMap. Contoh referensi ConfigMap dalam definisi Pod:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skabada
+spec:
+  containers:
+  - name: mycontainer
+    image: myimage
+    env:
+      - name: MY_KEY
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: mykey
+```
+
+#### Menggunakan Variabel Environment dalam Aplikasi
+Akses variabel lingkungan menggunakan metode standar untuk bahasa pemrograman. Berikut contohnya untuk python:
+```
+import os
+my_key = os.environ.get('MY_KEY')
+my_secret_key = os.environ.get('MY_SECRET_KEY')
+```
+
+#### Praktik Terbaik untuk Injeksi Data
+Gunakan Konfigurasi yang Tidak Dapat Diubah
+Jika memungkinkan, buat ulang Pod alih-alih memodifikasinya untuk memastikan konfigurasi diterapkan dengan benar.
+
+Gunakan Key Tertentu
+Saat mereferensikan ConfigMaps dan Secrets, tentukan Key untuk membuat konfigurasi menjadi eksplisit.
+
+Validasi Konfigurasi
+Pastikan kode aplikasi memvalidasi konfigurasi dan jelas gagal jika konfigurasi tidak valid.
+
+## J. Volume
+Di Kubernetes, volume pada dasarnya adalah sebuah direktori, mungkin berisi beberapa data di dalamnya, yang dapat diakses oleh container di dalam pod. Siklus hidup sebuah volume terikat dengan siklus hidup pod. Artinya jika sebuah pod mati, volumenya juga akan hilang, dan data mungkin hilang. Namun, Kubernetes mendukung banyak jenis volume, dan beberapa di antaranya tetap bertahan melampaui siklus hidup pod.
+
+#### Jenis Volume
+#####  emptyDir: 
+1. Direktori kosong sederhana yang digunakan oleh container sebagai ruang awal atau untuk berbagi data antar container dalam sebuah pod.
+2. Data di dalam blankDir bersifat sementara (yaitu, data tersebut akan hilang ketika pod dihapus).
+#####  hostPath:
+1. Memasang direktori atau file dari sistem file node host ke dalam pod.
+2. Berguna untuk pengaturan node tunggal.
+#####  nfs:
+1. Memasang share NFS ke dalam pod.
+#####  persistentVolumeClaim (PVC):
+1. Menyediakan cara bagi pod untuk mengklaim sumber daya penyimpanan persisten yang ditentukan dalam PersistentVolume.
+2. Data dapat bertahan saat pod dihidupkan ulang.
+#####  configMap, secret:
+1. Mengizinkan pod mengakses data konfigurasi dan rahasia yang masing-masing disimpan di objek ConfigMap dan Secret Kubernetes.
+#####  projected:
+1. Memungkinkan kita memproyeksikan beberapa sumber volume yang ada ke dalam direktori yang sama.
+#####  csi:
+1. API standar untuk menghubungkan sistem penyimpanan ke Kubernetes menggunakan Container Storage Interface (CSI).
+#####  downwardAPI:
+1. Mengekspos info pod dan sistem ke container.
+#####  azureDisk, awsElasticBlockStore, gcePersistentDisk, etc.:
+1. Cloud provider-specific storage solutions.
+
+#### Mengonfigurasi Volume Pod
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: my-image
+    volumeMounts:
+    - mountPath: /data
+      name: my-volume
+  volumes:
+  - name: my-volume
+    emptyDir: {}
+```
+Dalam contoh ini, volume emptyDir bernama my-volume dibuat dan dipasang ke dalam container /data.
+
+## K. Rolling Update
+Rolling Update adalah fitur penting di Kubernetes yang memungkinkan ktia memperbarui versi aplikasi yang sedang berjalan tanpa downtime. Hal ini dilakukan dengan memperbarui instance Pod secara bertahap dengan yang baru.
+
+Saat melakukan pembaruan berkelanjutan, Kubernetes secara bertahap mengganti pod versi lama dengan versi baru, memastikan bahwa tidak semua pod dihapus secara bersamaan. Hal ini memastikan aplikasi tetap tersedia bagi pengguna selama proses pembaruan.
+
+#### Cara Kerja Rolling Update
+1. Pod Baru Telah Dibuat: Kubernetes memulai dengan membuat pod dengan aplikasi versi baru.
+2. Pod Lama Dihapus: Saat pod baru sudah siap, pod lama akan dihentikan.
+3. Peluncuran Progresif: Pembaruan dilakukan secara progresif, memastikan bahwa sejumlah pod tertentu selalu tersedia dan tidak lebih dari jumlah pod tertentu yang tidak tersedia selama pembaruan.
+
+#### Konfigurasi Rolling Update
+Berikut contoh isi konfigurasi rolling update:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: my-image:latest
+```
+Melakukan Rolling Update
+Untuk melakukan rolling update, ubah gambar container pod:
+```
+kubectl set image deployment/my-deployment my-container=my-image:v2
+```
+Perintah ini memperbarui image container bernama my-container dalam penerapan my-deployment ke my-image:v2.
+
+#### Rollback Rolling Update
+Jika ada yang tidak beres dengan rolling update, Kubernetes memungkinkan untuk melakukan rollback ke penerapan sebelumnya. Gunakan command berikut:
+```
+kubectl rollout undo deployment/my-deployment
+```
+
+#### Monitor Rollback Update
+Untuk melihat status rollback update gunakan command:
+```
+kubectl rollout status deployment/my-deployment
+```
+
+## L. Jobs
+Di Kubernetes, Job adalah konstruksi khusus yang dirancang untuk menjalankan satu atau lebih Pod hingga selesai. Berbeda dengan Pod atau Deployment yang mana container dapat berjalan tanpa batas waktu jika tidak dihentikan, Job mengelola eksekusi satu atau lebih Pod dan memastikan bahwa sebuah sejumlah tertentu berhasil dihentikan. Pekerjaan berguna untuk menjalankan proses batch, tugas satu kali, atau tugas lain apa pun yang perlu dijalankan hingga selesai, bukan dijalankan terus-menerus.
+
+#### Jenis Jobs
+#####  Jobs Non-paralel:
+Sebuah Job yang mengelola sebuah Pod dan memastikan Pod tersebut berjalan hingga selesai.
+#####  Jobs Paralel dengan Jumlah Penyelesaian Tetap:
+Sebuah Job yang menjalankan beberapa Pod secara paralel dan menunggu hingga sejumlah Pod tertentu berhasil diselesaikan.
+#####  Jobs Paralel dengan Work Queue:
+Jobs dimana beberapa Pod bekerja di luar antrian yang sama. Hal ini berguna untuk mendistribusikan pekerjaan ke beberapa worker.
+
+#### Konfigurasi Jobs
+Berikut contoh konfigurasi Job:
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: my-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: my-container
+        image: my-image
+        command: ["do-something"]
+      restartPolicy: Never
+```
+Dalam contoh ini, Job akan membuat sebuah Pod yang menjalankan perintah do-something di dalam container my-image, dan restartPolicy diatur ke Never, yang berarti Pod tidak akan di-restart jika gagal atau selesai.
+
+#### Konfigurasi Jobs Paralel
+Untuk menjalankan beberapa Pod secara paralel pada sebuah Jobs,kita dapat menentukan kolom completion dan parallelism:
+#####
+completion: Menentukan jumlah pod yang berhasil diselesaikan dan pekerjaan harus dijalankan.
+#####
+parallelism: Menentukan jumlah maksimum Pod yang diinginkan untuk dijalankan pada waktu tertentu.RestartPolicy diatur ke Never, yang berarti Pod tidak akan di-restart jika gagal atau selesai.
+
+Berikut contoh konfigurasi Job paralel
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: parallel-job
+spec:
+  completions: 10
+  parallelism: 3
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: my-worker-image
+      restartPolicy: Never
+```
+
+#### Memonitor dan Menghapus Jobs
+Pantau status sebuah Job dengan kubectl:
+```
+kubectl describe job my-job
+```
+
+Hapus sebuah Job dengan kubectl:
+```
+kubectl delete job my-job
+```
+Saat menghapus sebuah Job menggunakan kubectl, semua Pod yang terkait dengan Job tersebut juga akan terhapus.
+
+#### CronJobs
+Kubernetes juga mendukung CronJobs, yang merupakan jenis Jobs yang berjalan pada waktu atau interval tertentu.Kubernetes menggunakan sintaksis yang sama dengan sintaksis cron UNIX untuk menjadwalkan pekerjaan berulang.
+
+## M. Scaling Aplikasi
+Scaling aplikasi adalah aspek mendasar dari Kubernetes, yang memungkinkan kita untuk menyesuaikan jumlah replika pod berdasarkan permintaan atau beban pada aplikasi. Scaling memastikan bahwa aplikasi memiliki jumlah sumber daya yang tepat (seperti Pod) untuk menangani permintaan saat ini. Kubernetes menyediakan dua jenis scaling utama, yaitu Horizontal Pod Autoscaling (HPA) dan Vertical Pod Autoscaling (VPA).
+
+#### Horizontal Pod Autoscaling (HPA):
+HPA secara otomatis menyesuaikan jumlah replika pod dalam penerapan atau kumpulan replika berdasarkan metrik yang diamati seperti penggunaan CPU atau metrik apa pun yang tersedia di server metrik Kubernetes. Pengontrol HPA secara berkala menyesuaikan jumlah replika dalam penerapan atau kumpulan replika agar sesuai dengan penggunaan CPU rata-rata yang diamati dengan target yang ditentukan oleh pengguna. HPA menanyakan pemanfaatan sumber daya terhadap metrik yang ditentukan dalam setiap definisi HorizontalPodAutoscaler.
+
+Berikut contoh konfigurasi HPA:
+```
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-application-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-application
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+```
+Dalam contoh ini, HPA diatur untuk menskalakan penerapan aplikasi. HPA memastikan bahwa pemanfaatan CPU tetap sekitar 80%. Jika pemanfaatannya melebihi, maka akan menambah lebih banyak replika (hingga maksimal 10).
+
+#### Vertical Pod Autoscaling (VPA)
+Scaling ini melibatkan penambahan atau pengurangan sumber daya (CPU, memori) dari sebuah pod. VPA secara otomatis menyesuaikan cadangan CPU dan memori untuk pod, membantu memastikan ketersediaan sumber daya untuk aplikasi. VPA memantau penggunaan CPU dan memori pod. Berdasarkan riwayat penggunaan dan nilai yang ditetapkan dalam objek VPA, VPA akan menyesuaikan permintaan CPU dan memori.
+
+#### Scaling Manual
+Selain scaling otomatis, kita juga dapat scaling aplikasi secara manual di Kubernetes:
+```
+kubectl scale deployment my-application --replicas=3
+```
+
+## M. Extend Kubernetes
+1. Custom Resources dan Custom Resource Definitions (CRDs):
+#### Sumber Daya Kustom (Custom Resources): Ini adalah ekstensi dari API Kubernetes yang memungkinkan kita membuat, mengonfigurasi, dan mengelola jenis sumber daya kustom.
+#### Definisi Sumber Daya Kustom (CRDs): CRDs memungkinkan pengguna mendefinisikan jenis sumber daya kustom mereka sendiri. Setelah CRD dibuat, pengguna dapat mengelola objek kustom menggunakan kubectl seperti sumber daya bawaan (misalnya, Pod atau Layanan).
+2. API Aggregation Layer:
+#### Kubernetes mendukung pengaturan server API tambahan dan memiliki server API Kubernetes utama mengarahkan lalu lintas ke server tambahan tersebut berdasarkan jalur API mereka. Ini berguna untuk memperluas API Kubernetes tanpa memodifikasi server API inti.
+3. Kontroler:
+#### Kontroler adalah loop kontrol yang mengawasi keadaan sistem Kubernetes dan membuat perubahan untuk memindahkan keadaan saat ini menuju keadaan yang diinginkan. Dengan menulis kontroler kustom, pengguna dapat mengotomatisasi dan memperluas fungsionalitas Kubernetes.
+#### Operator Pattern: Sebuah operator adalah metode untuk mengemas, menyebarkan, dan mengelola aplikasi Kubernetes menggunakan sumber daya kustom dan kontroler kustom. Operator memperluas Kubernetes untuk mengotomatisasi manajemen seluruh siklus hidup aplikasi tertentu.
+4. Scheduler Extensibility:
+#### Kubernetes memungkinkan kita menggunakan beberapa penjadwal atau menggantikan penjadwal bawaan dengan kustom. Ini berguna jika kita memiliki persyaratan penjadwalan khusus yang tidak dipenuhi oleh penjadwal bawaan.
+5. Webhook:
+#### Kubernetes mendukung beberapa jenis webhook, termasuk:
+##### Webhook Penerimaan (Admission Webhooks): Ini memungkinkan kita untuk mencegat dan memodifikasi permintaan ke server API Kubernetes.
+##### Webhook Otentikasi dan Otorisasi: Ini memungkinkan sistem eksternal untuk berintegrasi dengan proses otentikasi dan otorisasi Kubernetes.
+6. Plugin Jaringan:
+#### Kubernetes mendukung plugin Container Network Interface (CNI), memungkinkan pengguna untuk menerapkan solusi jaringan kustom.
+7. Plugin Penyimpanan:
+#### Kubernetes mendukung sistem plugin untuk penyimpanan, memungkinkan pengguna menambahkan dukungan untuk backend penyimpanan tambahan.
+8. Service Mesh:
+#### Meskipun bukan mekanisme ekstensi langsung dari Kubernetes, service mesh seperti Istio dan Linkerd menyediakan kemampuan jaringan yang ditingkatkan.
+9. Plugin Kubectl:
+#### kubectl dapat diperluas dengan perintah kustom dengan membuat plugin. Plugin-plugin ini adalah binari mandiri yang dianggap sebagai sub-perintah kubectl baru.
+10. Server API Kustom:
+#### Pengguna tingkat lanjut dapat menerapkan server API kustom sepenuhnya untuk menggantikan yang bawaan dari Kubernetes. Ini adalah tugas yang kompleks tetapi menawarkan fleksibilitas maksimum.
