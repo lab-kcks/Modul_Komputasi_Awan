@@ -1070,7 +1070,7 @@ Selain scaling otomatis, kita juga dapat scaling aplikasi secara manual di Kuber
 kubectl scale deployment my-application --replicas=3
 ```
 
-## M. Extend Kubernetes
+## N. Extend Kubernetes
 1. Custom Resources dan Custom Resource Definitions (CRDs):
 #### Sumber Daya Kustom (Custom Resources): Ini adalah ekstensi dari API Kubernetes yang memungkinkan kita membuat, mengonfigurasi, dan mengelola jenis sumber daya kustom.
 #### Definisi Sumber Daya Kustom (CRDs): CRDs memungkinkan pengguna mendefinisikan jenis sumber daya kustom mereka sendiri. Setelah CRD dibuat, pengguna dapat mengelola objek kustom menggunakan kubectl seperti sumber daya bawaan (misalnya, Pod atau Layanan).
