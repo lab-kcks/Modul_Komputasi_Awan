@@ -189,7 +189,7 @@ Kita dapat mendefinisikan konfigurasi Pod dalam berkas YAML dan kemudian menerap
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx-pod
+  name: nginx-pod2
 spec:
   containers:
   - name: nginx-container
@@ -362,7 +362,7 @@ minikube dashboard
 ##### Port Forwarding ke Port di Pod
 Saat ingin berkomunikasi dengan pod tertentu tanpa melalui layanan (untuk debugging atau alasan lainnya), Kubernetes memungkinkan konfigurasi port forwarding ke pod. Hal ini dilakukan melalui perintah **kubectl port-forward**. Command ini akan meneruskan port lokal mesin **8888** ke port **8080** dari pod **nginx-pod**:
 ```
-kubectl port-forward nginx-pod 8888:8080
+kubectl port-forward nginx-pod2 8888:8080
 ```
 Di terminal yang berbeda, sekarang dapat menggunakan curl untuk mengirim permintaan HTTP ke pod melalui proksi port-forward kubectl yang berjalan di localhost:8888:
 ```
@@ -372,6 +372,8 @@ Outputnya nanti adalah:
 > You've hit nginx-pod
 
 Menggunakan port forwarding seperti ini adalah cara efektif untuk menguji masing-masing pod.
+
+**Catatan**: Proses port forwarding memakan waktu cukup lama, jadi kalau tidak sabaran silahkan interrupt prosesnya ;)
 
 ## D. Label
 Pengorganisasian pod dan semua objek Kubernetes lainnya dilakukan melalui label. Label adalah fitur Kubernetes yang sederhana namun sangat kuat untuk mengatur tidak hanya pod, tetapi semua sumber daya Kubernetes lainnya. Label adalah pasangan key value arbitrer yang dilampirkan ke sumber daya, yang kemudian digunakan saat memilih sumber daya menggunakan label selector (sumber daya difilter berdasarkan apakah sumber daya tersebut menyertakan label yang ditentukan dalam selector).
@@ -413,12 +415,12 @@ kubectl get po -L skibidi
 
 #### Memodifikasi Label Pod
 
-Label juga dapat ditambahkan dan dimodifikasi pada pod yang sudah ada. Karena pod **nginx-pod-label** juga dibuat secara manual, mari tambahkan label **creation_method=manual** ke dalamnya:
+Label juga dapat ditambahkan dan dimodifikasi pada pod yang sudah ada. Karena pod **nginx-pod2** juga dibuat secara manual, mari tambahkan label **creation_method=manual** ke dalamnya:
 ```
-kubectl label po nginx-pod-label creation_method=manual
+kubectl label po nginx-pod2 creation_method=manual
 ```
 
-Sekarang, mari kita ubah juga label **env=prod** menjadi **env=debug** pada pod **nginx-pod-label**, untuk melihat bagaimana label yang ada dapat diubah. Gunakan opsi **--overwrite** saat mengubah label yang ada.
+Sekarang, mari kita ubah juga label **env=prod** menjadi **env=debug** pada pod **nginx-pod2**, untuk melihat bagaimana label yang ada dapat diubah. Gunakan opsi **--overwrite** saat mengubah label yang ada.
 ```
 kubectl label po nginx-pod-label env=debug --overwrite
 ```
@@ -479,7 +481,7 @@ minikube   Ready     master    9d        v1.10.0
 
 Seperti yang diharapkan, hanya satu node yang memiliki label ini. Untuk membuat listing semua node dan meminta kubectl untuk menampilkan kolom tambahan yang menunjukkan value label gpu setiap node, masukkan command berikut:
 ```
-kubectl dapatkan node -L gpu
+kubectl get node -L gpu
 ```
 Outputnya nanti adalah:
 ```bash
@@ -524,7 +526,7 @@ Kegunaan yang bagus untuk membuat anotasi pada pod adalah dengan menambahkan des
 #### Mencari anotasi objek
 Mari kita lihat contoh anotasi yang ditambahkan Kubernetes secara otomatis ke pod yang dibuat di bagian sebelumnya. Untuk melihat anotasinya, perlu meminta YAML lengkap dari pod tersebut atau menggunakan command `kubectl describe`. Gunakan opsi pertama dalam listing berikut:
 ```
-kubectl get po nginx-pod -o yaml
+kubectl get po nginx-pod2 -o yaml
 ```
 Outputnya nanti adalah:
 ```bash
@@ -543,9 +545,9 @@ Tanpa menjelaskan terlalu banyak detail, seperti yang dilihat, anotasi `kubernet
 `1.8` dan akan dihapus di `1.9`, jadi seharusnya tidak ada lagi di YAML.
 
 #### Menambah dan mengubah anotasi
-Anotasi jelas dapat ditambahkan ke pod pada waktu pembuatan, sama seperti label. Tapi bisa juga ditambahkan setelah menggunakan command berikut. Mari coba tambahkan ini ke pod `nginx-pod` sekarang:
+Anotasi jelas dapat ditambahkan ke pod pada waktu pembuatan, sama seperti label. Tapi bisa juga ditambahkan setelah menggunakan command berikut. Mari coba tambahkan ini ke pod `nginx-pod2` sekarang:
 ```
-kubectl annotate pod nginx-pod knrt10.github.io/someannotation="skibidi toilet"
+kubectl annotate pod nginx-pod2 knrt10.github.io/someannotation="skibidi toilet"
 ```
 
 Telah ditambahkan anotasi `knrt10.github.io/someannotation` dengan value `skibidi toilet`. Sebaiknya gunakan format ini untuk key anotasi guna mencegah benturan key. Saat alat atau libraries berbeda menambahkan anotasi ke objek, alat atau libraries tersebut mungkin secara tidak sengaja menimpa anotasi satu sama lain jika tidak menggunakan awalan unik seperti yang dilakukan di sini. Periksa pod sekarang menggunakan command berikut:
@@ -571,63 +573,31 @@ Namespace memungkinkan pemisahan sumber daya yang tidak dimiliki bersama ke dala
 Namespace adalah sumber daya Kubernetes seperti sumber daya lainnya, sehingga kita dapat membuatnya dengan memposting sebuah
 file YAML ke server API Kubernetes. Buat file bernama **custom-namespace.yaml**
 
-Kita akan membuat file bernama **custom-namespace.yaml** (di direktori mana pun). Listing berikut menunjukkan  seluruh isi file:
+Kita akan membuat file bernama **customnamespace.yaml** (di direktori mana pun). Listing berikut menunjukkan  seluruh isi file:
 ```yml
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: custom-namespace
+  name: customnamespace
 ```
 
 Sekarang ketikkan command berikut:
 ```
-kubectl create -f custom-namespace.yaml
+kubectl create -f customnamespace.yaml
 ```
 Outputnya nanti adalah:
-
-#### Mengelola Objek di namespace Lain
-Untuk membuat sumber daya di namespace yang dibuat, ubah isi nginx-pod dengan konfigurasi berikut:
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mypod
-  namespace: custom-namespace
-spec:
-  containers:
-  
-name: mycontainer
-  image: nginx:latest
-  livenessProbe:
-    httpGet:
-      path: /index.html
-      port: 80
-    initialDelaySeconds: 3
-    periodSeconds: 3
-name: mysecondcontainer
-image: busybox
-```
-
-Kita telah menambahkan entri `namespace: custom-namespace` ke bagian metadata, atau tentukan namespace saat membuat sumber daya command `kubectl create`:
-```
-kubectl create -f nginx-pod.yaml
-```
-
-Kubernetes sekarang memiliki dua pod dengan nama yang sama (kubia-manual). Salah satunya ada di `default`
-namespace, dan yang lainnya ada di `custom-namespace`.
-
-Saat membuat daftar, mendeskripsikan, memodifikasi, atau menghapus objek di namespace lain, teruskan flag `--namespace (atau -n)` ke kubectl. Jika tidak menentukan namespace, kubectl akan melakukan tindakan di namespace default yang dikonfigurasi dalam konteks kubectl saat ini. Namespace konteks saat ini dan konteks saat ini sendiri dapat diubah melalui command `kubectl config`.
 
 #### Memahami Isolasi yang Disediakan oleh namespace
 Untuk mengakhiri bagian tentang namespace, penting untuk memahami apa yang tidak disediakan oleh namespace, setidaknya secara bawaan. Meskipun namespace memungkinkan objek diisolasi ke dalam kelompok-kelompok yang berbeda, memfasilitasi operasi hanya pada objek yang termasuk dalam namespace tertentu, namespace tidak secara otomatis menyediakan isolasi terhadap objek yang sedang berjalan. Sebagai ilustrasi, seseorang mungkin beranggapan bahwa ketika pengguna yang berbeda menjalankan pod di namespace yang berbeda, pod-pod tersebut akan terisolasi dan tidak dapat berkomunikasi satu sama lain. Namun, kenyataannya tidak selalu seperti itu. Apakah sebuah namespace menyediakan isolasi jaringan atau tidak tergantung pada solusi jaringan yang diintegrasikan dengan Kubernetes. Jika solusi tersebut tidak menyediakan isolasi jaringan antar namespace, maka pod di namespace 'foo' yang mengetahui alamat IP dari pod di namespace 'bar' dapat dengan bebas mengirimkan lalu lintas, seperti permintaan HTTP, ke pod tersebut.
 
 ## F. Menghapus Pod
-Kita telah membuat sejumlah pod yang seharusnya sudah berjalan. Jika mengikuti dari awal, seharusnya terdapat 5 pod di namespace `default` dan satu di namespace `custom-namespace`. Kita akan menghentikan semuanya sekarang, karena kita tidak membutuhkannya lagi.
+Kita telah membuat sejumlah pod yang seharusnya sudah berjalan. Jika mengikuti dari awal, seharusnya terdapat 5 pod di namespace `default` dan satu di namespace `customnamespace`. Kita akan menghentikan semuanya sekarang, karena kita tidak membutuhkannya lagi.
+**Catatan**:- Beberapa command disini akan memakan waktu lama. Silahkan diinterupt jika tidak sabar ;)
 
 ### Menghapus Pod Berdasarkan Nama
-Mari kita hapus dulu nama pod `nginx-pod`:
+Mari kita hapus dulu nama pod `nginx-pod2`:
 ```
-kubectl delete po nginx-pod
+kubectl delete po nginx-pod2
 ```
 
 ### Menghapus Pod Berdasarkan Label Selector
