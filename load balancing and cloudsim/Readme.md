@@ -397,8 +397,11 @@ docker-compose up --build
 ```
 
 Kemudiian buka ```localhost``` dan coba refresh beberapa kali
+
 ![A](./img/A.png)
+
 ![B](./img/B.png)
+
 ![C](./img/C.png)
 
 untuk setup mongodb, maka buka ```localhost:8082```, kemudian masukkan username dan password yang sudah ditentukan sebelumnya.
