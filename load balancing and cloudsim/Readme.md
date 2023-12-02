@@ -461,7 +461,9 @@ Beberapa komponen yang perlu diinstall:
 3. [common-math 3.6.1](https://archive.apache.org/dist/commons/math/binaries/)
 
 Video Tutorial menyiapkan tools:
+
 [![Tutorial](https://img.youtube.com/vi/OZRbkkEuQMI/0.jpg)](https://www.youtube.com/watch?v=OZRbkkEuQMI "Ditonton bagus-bagus yaw") 
+
 Atau tanya asisten lmao
 
 Setelah selesai disiapkan, download repository berikut:
