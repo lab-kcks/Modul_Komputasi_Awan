@@ -10,7 +10,7 @@ Load Balancing
 		- playHours: int
 2. Lakukan konfigurasi load balancer di nginx dengan algoritma:
 	- RoundRobin
-	- Weighted
+	- Weighted dengan weight masing-masing [1 2 3 4 5]
 	- least_connection
 4. Bandingkan Request per second, responds time menggunakan locust, dengan:
 	- No. user: 1000
