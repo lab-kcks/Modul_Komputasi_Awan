@@ -13,7 +13,7 @@ Load Balancing
 	- Weighted dengan weight masing-masing [1 2 3 4 5]
 	- least_connection
 4. Bandingkan Request per second, responds time menggunakan locust, dengan:
-	- No. user: 1000
-	- spawn rate: 10
+	- No. user: 10
+	- spawn rate: 5
 	- lakukakan hingga 1000 user sudah spawn
 (Locust menggunakan struktur  yang sama dengan file yang dijelaskan kemarin)
