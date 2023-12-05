@@ -15,5 +15,5 @@ Load Balancing
 4. Bandingkan Request per second, responds time menggunakan locust, dengan:
 	- No. user: 10
 	- spawn rate: 5
-	- lakukakan hingga 100 user sudah spawn
+	- lakukakan selama 1 menit pertama
 (Locust menggunakan struktur  yang sama dengan file yang dijelaskan kemarin)
