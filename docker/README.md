@@ -14,7 +14,7 @@ Virtual Machine (VM) merupakan abstraksi perangkat keras fisik yang mengubah sat
 
 Container adalah abstraksi pada lapisan aplikasi yang mengemas kode dan *dependencies* secara bersamaan. Untuk mengatur container dibutuhkan *container manager*. Dengan menggunakan container memungkinkan untuk menjalankan beberapa container berjalan di mesin yang sama dan berbagu OS dengan container lainnya. Selain itu, *container manager* bertugas juga untuk melakukan isolasi pada setiap container. Dengan menggunakan container, *resource* yang dipakai lebih sedikit ketimbang menggunakan VM (container dapat berukuran puluhan MB saja).
 
-## Installasi Docker
+## B. Installasi Docker
 
 **Docker Desktop (Windows, Mac, Linux)**
 1. Download [docker desktop](https://www.docker.com/products/docker-desktop/).
@@ -37,15 +37,15 @@ Container adalah abstraksi pada lapisan aplikasi yang mengemas kode dan *depende
     
 2. Setelah itu, install [Docker Compose](https://docs.docker.com/compose/install/#linux)
 
-## B. Docker
+## C. Docker
 ![docker-logo](./images/docker-logo.png)
 
-### B.1 Apa itu Docker?
+### C.1 Apa itu Docker?
 
 Docker merupakan layanan *open-source* yang dapat mengemas serta menjalan aplikasi dengan lingkungan yang terisolasi. Dengan mengisolasi aplikasi, memungkinkan *developer* untuk menjalankan banyak container pada waktu bersamaan. Untuk mengisolasi setiap aplikasi, di docker menggunakan container. Penggunaan container juga memungkinkan *developer* untuk menjalankan aplikasi di berbagai lingkungan.
 
 
-### B.2 Arsitektur Docker
+### C.2 Arsitektur Docker
 
 ![docker-architecture](./images/docker-arsitektur.png)
 
@@ -80,7 +80,7 @@ Saat menggunakan perintah `docker pull` atau `docker run`, Docker melakukan pull
 
 Docker Object merupakan komponen-komponen pada docker, seperti image, container, network, volume, plugin, dan lain-lain.
 
-## C. Docker Image
+## D. Docker Image
 
 Docker Image adalah *read-only template* yang berisi instruksi untuk membuat Docker Container. Image berisi intruksi untuk menjalankan aplikasi bersama dengan konfigurasi yang diperlukan. Image dapat mengambil milik orang lain di Docker Hub atau dapat dibuat sendiri menggunakan Dockerfile. Pastikan mempunyai Image aplikasi sebelum aplikasi tersebut dijalankan di Docker.
 
@@ -124,7 +124,7 @@ docker pull httpd
 
 ![docker pull httpd](./images/docker-pull-httpd.png)
 
-## D. Docker Container
+## E. Docker Container
 
 Docker Container adalah instance image yang dijalankan. Container berisi aplikasi dan dependensinya. dimana setiap container terisolasi dengan host maupun container lainnya. Setiap container berjalan dalam lingkungan yang terisolasi dengan container lainnya dan dari host sistem operasi. Container berbagi dengan kernel host, yang membuat mereka sangat efisien dalam penggunaan sumber daya dan cepat dalam menjalankannya. Container Docker juga memiliki tingkat portabilitas yang tinggi, memungkinkan pengguna untuk membuat container dalam lingkungan pengembangan dan dengan mudah menjalankannya dalam lingkungan produksi dengan cara yang konsisten.
 
@@ -200,7 +200,7 @@ docker run --name tka -p 9000:80 -d httpd
 ![Untitled](./images/docker-container-3.png)
 
 
-## E. Docker Volume
+## F. Docker Volume
 
 Docker volume adalah sebuah mekanisme dalam Docker yang digunakan untuk menyimpan dan mengelola data persisten yang digunakan oleh container. Docker Volume diterapkan untuk menyimpan data atau state karena docker tidak menyimpan state. Docker Volume digunakan untuk memisahkan data yang perlu bertahan lebih lama dan harus diakses oleh satu atau beberapa kontainer dari lingkungan yang bersifat efemeral. Berikut merupakan langkah-langkah untuk mengaktifkan volume:
 
@@ -256,7 +256,7 @@ docker volume ls
 docker volume create tka
 ```
 
-## F. Dockerfile
+## G. Dockerfile
 
 Docker dapat menghasilkan gambar secara otomatis dengan memproses instruksi yang terkandung dalam Dockerfile. Dockerfile adalah sebuah dokumen berbasis teks yang berisi serangkaian perintah yang mengarah pada pembuatan gambar Docker. Dalam Dockerfile, terdapat urutan langkah yang harus dijalankan oleh Docker Engine untuk menciptakan sebuah gambar yang dapat digunakan sebagai dasar untuk menjalankan kontainer. Dockerfile berfungsi sebagai panduan yang merincikan konfigurasi dan dependensi yang diperlukan untuk menjalankan aplikasi atau layanan dalam lingkungan kontainer.
 ### Perintah Dockerfile
@@ -331,7 +331,7 @@ Berikut beberapa perintah pada Dockerfile.
 
     ![Untitled](./images/docker-dockerfile.png)
 
-## G. Docker Compose
+## H. Docker Compose
 
 Docker Compose merupakan tool yang digunkan untuk mendefinisikan dan menjalankan aplikasi yang terdiri dari beberapa container secara sekaligus menggunakan file YAML. Docker Compose mempermudah dalam mengelola aplikasi yang terdiri dari berbagai layanan yang harus berinteraksi satu sama lain. Docker Compose berjalan di semua lingkungan; *production*, *staging*, *development*, *pengujian*, serta *CI workflows*. Docker Compose juga memiliki perintah untuk mengelola seluruh siklus hidup aplikasi:
 
@@ -449,7 +449,7 @@ File compose ini berisi dua layanan, yaitu web dan redis.
   ![docker compose](./images/docker-compose.png)
 
 
-## H. Latihan Soal
+## I. Latihan Soal
 
 Buatlah Dockerfile dengan base Image adalah `python:3.8` dan install dependensi `-no-cache-dir`. Atur direktori aplikasi di `/usr/src/app` serta definisikan port `5000`. Setelah itu, jalankan perintah `python ./app.py`.
 
