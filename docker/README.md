@@ -14,6 +14,29 @@ Virtual Machine (VM) merupakan abstraksi perangkat keras fisik yang mengubah sat
 
 Container adalah abstraksi pada lapisan aplikasi yang mengemas kode dan *dependencies* secara bersamaan. Untuk mengatur container dibutuhkan *container manager*. Dengan menggunakan container memungkinkan untuk menjalankan beberapa container berjalan di mesin yang sama dan berbagu OS dengan container lainnya. Selain itu, *container manager* bertugas juga untuk melakukan isolasi pada setiap container. Dengan menggunakan container, *resource* yang dipakai lebih sedikit ketimbang menggunakan VM (container dapat berukuran puluhan MB saja).
 
+## Installasi Docker
+
+**Docker Desktop (Windows, Mac, Linux)**
+1. Download [docker desktop](https://www.docker.com/products/docker-desktop/).
+2. Buka file installer yang telah diunduh, kemudian ikuti panduan instalasi yang muncul. Ini akan menginstal Docker Desktop ke komputer Anda.
+3. Jalankan Docker Desktop.
+4. Cek versi docke dengan perintah 
+    ```docker
+    docker --version
+    ```
+5. Selanjutnya, jalankan perintah berikut untuk memeriksa apakah Docker dapat menjalankan kontainer Hello World:
+    ```docker
+    docker run hello-world
+    ```
+6. Jika semuanya berjalan dengan baik, Anda akan melihat pesan yang mengkonfirmasi bahwa Docker telah diinstal dengan sukses.
+
+**Linux**
+1. Lakukan instalasi [Docker Engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) 
+
+    Lakukan instalasi sampai [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/).
+    
+2. Setelah itu, install [Docker Compose](https://docs.docker.com/compose/install/#linux)
+
 ## B. Docker
 ![docker-logo](./images/docker-logo.png)
 
@@ -56,30 +79,6 @@ Saat menggunakan perintah `docker pull` atau `docker run`, Docker melakukan pull
 **Docker Objects**
 
 Docker Object merupakan komponen-komponen pada docker, seperti image, container, network, volume, plugin, dan lain-lain.
-
-### B.3 Instalasi Docker
-
-**Docker Desktop (Windows, Mac, Linux)**
-1. Download [docker desktop](https://www.docker.com/products/docker-desktop/).
-2. Buka file installer yang telah diunduh, kemudian ikuti panduan instalasi yang muncul. Ini akan menginstal Docker Desktop ke komputer Anda.
-3. Jalankan Docker Desktop.
-4. Cek versi docke dengan perintah 
-    ```docker
-    docker --version
-    ```
-5. Selanjutnya, jalankan perintah berikut untuk memeriksa apakah Docker dapat menjalankan kontainer Hello World:
-    ```docker
-    docker run hello-world
-    ```
-6. Jika semuanya berjalan dengan baik, Anda akan melihat pesan yang mengkonfirmasi bahwa Docker telah diinstal dengan sukses.
-
-**Linux**
-1. Lakukan instalasi [Docker Engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) 
-
-    Lakukan instalasi sampai [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/).
-    
-2. Setelah itu, install [Docker Compose](https://docs.docker.com/compose/install/#linux)
-
 
 ## C. Docker Image
 
