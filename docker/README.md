@@ -451,7 +451,9 @@ File compose ini berisi dua layanan, yaitu web dan redis.
 
 ## I. Latihan Soal
 
-Buatlah Dockerfile dengan base Image adalah `python:3.8` dan install dependensi `-no-cache-dir`. Atur direktori aplikasi di `/usr/src/app` serta definisikan port `5000`. Setelah itu, jalankan perintah `python ./app.py`.
+1.  Buatlah container menggunakan base image `nginx`, serta definisikan port `5000` agar bisa diakses melalui localhost, dan jangan lupa untuk stop dan remove setelah berhasil
+2.  Buatlah Dockerfile dengan base Image adalah `python:3.8` dan file `index.py` di dalam folder www dengan tulisan `"Hello world"`. Atur direktori di /var/www/html serta definisikan port `5003`. Setelah itu, cobalah akses pada port `5003`
+  
 
 ## Reference
 
