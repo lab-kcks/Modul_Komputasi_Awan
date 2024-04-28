@@ -29,6 +29,8 @@ Container adalah abstraksi pada lapisan aplikasi yang mengemas kode dan *depende
     docker run hello-world
     ```
 6. Jika semuanya berjalan dengan baik, Anda akan melihat pesan yang mengkonfirmasi bahwa Docker telah diinstal dengan sukses.
+![image](https://github.com/lab-kcks/Modul_Komputasi_Awan/blob/main/docker/images/Docker.png)
+Jika kamu masih mengalami kesulitan dalam menginstall docker, kamu dapat melihat [tautan video di youtube berikut](https://youtu.be/XgRGI0Pw2mM?si=13mKwmYt_KhsRNni)
 
 **Linux**
 1. Lakukan instalasi [Docker Engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) 
