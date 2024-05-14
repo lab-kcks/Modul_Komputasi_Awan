@@ -1,4 +1,4 @@
-![image](https://github.com/lab-kcks/Modul_Komputasi_Awan/assets/103043684/8c9e9899-e681-4c77-bb2c-602a0d34fc99)# Kubernetes
+# Kubernetes
 
 ## Apa itu Kubernetes?
 
