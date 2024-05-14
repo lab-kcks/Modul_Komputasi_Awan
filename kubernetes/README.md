@@ -332,6 +332,35 @@ kubectl apply -f mongo-config.yaml
 kubectl apply -f mongo-secret.yaml
 ```
 
+### Matikan mesin
+
+Untuk mematikan sistem minikube, dapat menggunakan command:
+```
+minikube stop
+```
+
+Untuk mematikan deployment, service, dan pods  tertentu, dapat menggunakan:
+```
+kubectl delete deployment [[nama deployment]]
+```
+```
+kubectl delete service [[nama service]]
+```
+```
+kubectl delete pods [[nama pods]]
+```
+
+Untuk mematikan semua service/deployment/pods dapat menggunakan command berikut:
+```
+kubectl delete deployment --all
+```
+```
+kubectl delete service --all
+```
+```
+kubectl delete pods --all
+```
+
 ## Contoh Project
 
 Kali ini, kita akan mencoba mendeploy nginx menggunakan kubernetes.
@@ -477,3 +506,7 @@ Jika kalian tidak bisa mengakses url tersebut, coba jalankan command berikut:
 ```
 minikube service nginx-service
 ```
+
+## Soal Asistensi
+
+Deploy aplikasi Apache2 dan set agar bisa di akses via port 30420.
