@@ -1,4 +1,4 @@
-# Kubernetes
+![image](https://github.com/lab-kcks/Modul_Komputasi_Awan/assets/103043684/8c9e9899-e681-4c77-bb2c-602a0d34fc99)# Kubernetes
 
 ## Apa itu Kubernetes?
 
@@ -417,13 +417,11 @@ spec:
       targetPort: 80
       nodePort: 30080
 ```
-Ketika code tersebut dijalankan, maka nginx akan dideploy dengan nama nginx-deployment, dan replica yang dibuat adalah tiga. Nginx yang dideploy diambil dari container/image: nginx:1.14.2
-
-Selain itu, akan ada service yang dibuat juga dengan nama nginx-service, di mana ini adalah external service type NodePort yang menggunakan `nodePort: 30080`
+Ketika code tersebut dijalankan, makan akan terbuat nginx-deployment dan nginx-service, service nya adalah external service type NodePort yang menggunakan `nodePort: 30080`
 
 Ketika nginx berhasil dideploy, maka nginx akan dapat diakses melalui url `<minikube-ip>:<nodePort>`
 
-Langkah selanjutnya, adalah menjalankan command kubectl apply
+Langkah selanjutnya, adalah menjalankan command kubectl apply untuk melakukan deploy
 ```
 kubectl apply -f nginx.yaml
 ```
@@ -509,4 +507,5 @@ minikube service nginx-service
 
 ## Soal Asistensi
 
-Deploy aplikasi Apache2 dan set agar bisa di akses via port 30420.
+1. Lakukan deploy aplikasi Apache2 dan set agar bisa di akses via port 30420.
+2. Tunjukkan seluruh pods, deployment, dan juga service yang berjalan. Hapus yang berhubungan dengan deploy apache di soal nomor 1.
