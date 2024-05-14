@@ -20,7 +20,7 @@ Kubernetes lah solusinya. Dengan kubernetes kita dapat mengotomatisasi deploymen
 
 Biasanya, sistem yang menggunakan kubernetes memiliki struktur sebagai berikut:
 
-![Struktur Sistem Kubernetes](/Modul_Komputasi_Awan/kubernetes/struktur-kubernetes.png)
+![Struktur Sistem Kubernetes](/struktur-kubernetes.png)
 
 
 ## Setup Kubernetes (Minikube)
