@@ -191,6 +191,8 @@ spec:
                 port:
                   number: 80
 ```
+Untuk melihat type service yang dijalankan, kita dapat menggunakan command `kubectl get service` atau `kubectl get svc`
+
 ### c. ConfigMap
 
 ConfigMap adalah objek Kubernetes yang digunakan untuk menyimpan data konfigurasi dalam bentuk pasangan `key: value`. ConfigMap memungkinkan untuk memisahkan konfigurasi aplikasi dari kode aplikasi, sehingga mempermudah manajemen konfigurasi dan memperbaiki praktik deployment.
