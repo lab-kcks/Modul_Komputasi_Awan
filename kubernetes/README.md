@@ -103,13 +103,107 @@ Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
 
 ### b. Service & Ingress
 
+Hal ini merujuk pada mekanisme yang berbeda untuk mengatur bagaimana aplikasi dan layanan dalam kluster Kubernetes dapat diakses, baik dari dalam maupun luar kluster.
+
   External Service
   - 
+  - External Service memungkinkan layanan Kubernetes untuk diakses dari luar kluster. Ini biasanya dicapai dengan menggunakan jenis layanan **LoadBalancer** atau **NodePort**.
+
+LoadBalancer akan Secara otomatis menyediakan alamat IP eksternal yang dapat diakses dari luar kluster melalui load balancer dari penyedia cloud (misalnya, AWS ELB, Google Cloud Load Balancer).
+
+Contoh Konfigurasi LoadBalancer :
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-external-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+```
+NodePort akan membuka port tertentu pada semua node dalam kluster dan mem-forward traffic ke Service tersebut.
+
+Contoh Konfigurasi NodePort :
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nodeport-service
+spec:
+  type: NodePort
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30000
+```
+Note : NodePorts are in the 30000-32767 range by default
 
   Internal Service
   - 
+  - Internal Service memungkinkan layanan Kubernetes diakses hanya dari dalam kluster. Ini biasanya menggunakan jenis layanan ClusterIP, yang merupakan default.
+
+Contoh Konfigurasi ClusterIP :
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-internal-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+```
+Service ini hanya dapat diakses dari dalam kluster dan tidak menyediakan akses dari luar.
+
+Note : ClusterIP merupakan type default dari service, tetapi tetap bisa didefinisikan dengan `type: ClusterIP`
 
   Ingress
   - 
+  - Ingress adalah objek Kubernetes yang mengelola akses eksternal ke layanan dalam kluster, biasanya HTTP dan HTTPS. Ingress menyediakan aturan routing yang fleksibel, mendukung SSL, dan lain-lain.
 
+Contoh Konfigurasi Ingress
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+    - host: my-app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-internal-service
+                port:
+                  number: 80
+```
 ### c. ConfigMap
+
+ConfigMap adalah objek Kubernetes yang digunakan untuk menyimpan data konfigurasi dalam bentuk pasangan `key: value`. ConfigMap memungkinkan untuk memisahkan konfigurasi aplikasi dari kode aplikasi, sehingga mempermudah manajemen konfigurasi dan memperbaiki praktik deployment.
+
+Contoh Konfigurasi ConfigMap
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  # Pasangan key: value
+  database_url: "jdbc:mysql://db.example.com:3306/mydatabase"
+  database_user: "user123"
+  database_password: "password123"
+```
