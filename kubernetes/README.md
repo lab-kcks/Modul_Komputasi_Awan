@@ -1,5 +1,27 @@
 # Kubernetes
 
+## Apa itu Kubernetes?
+
+Kubernetes adalah platform open-source yang digunakan untuk mengelola workloads aplikasi yang dikontainerisasi, serta menyediakan konfigurasi dan otomatisasi secara deklaratif. Dikembangkan oleh Google dan sekarang dikelola oleh Cloud Native Computing Foundation (CNCF), Kubernetes memungkinkan orkestrasi terhadap computing, networking, dan infrastruktur penyimpanan.
+
+## Kenapa kok kita pakai Kubernetes?
+
+Misalkan kita mendeploy website/aplikasi kita dengan menggunakan Docker. Dan website yang kita deploy sangat keren sekali sehingga banyak sekali orang yang mengunjungi website kita.
+
+Karena teralu banyak orang yang datang ke website kita, server kita tidak bisa mengatasi traffic yang datang ke website tersebut sehingga website kita down.
+
+Nah, untuk mengatasi solusi tersebut sangat mudah, kita hanya perlu mendeploy website backup serta load balancer sehingga jika website utama kita down, user bisa di arahkan ke website backup.
+
+Namun, jika semakin banyak orang yang datang ke website kita sehingga 2 website saja tidak cukup, maka kita juga harus terus-terus mengkonfigurasi dan mendeploy website. Kalau masih 2 atau 5 mungkin tidak apa-apa, tapi bagaimana jika kita perlu meningkatkan website kita menjadi 100 website dan harus di deploy secara bersamaan dan harus mengkonfigurasi load balancernya?
+
+Kubernetes lah solusinya. Dengan kubernetes kita dapat mengotomatisasi deployment website/aplikasi kita. Dengan kubernetes juga, jika ingin meningkatkan skala website kita (yang sebelumnya hanya 2 website menjadi 100) cukup mudah dan real time!
+
+## Struktur sistem dengan kubernetes
+
+Biasanya, sistem yang menggunakan kubernetes memiliki struktur sebagai berikut:
+
+![Struktur Sistem Kubernetes](/Modul_Komputasi_Awan/kubernetes/struktur-kubernetes.png)
+
 
 ## Setup Kubernetes (Minikube)
 
@@ -88,6 +110,8 @@ Client Version: v1.30.0
 Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
 ```
 ## Main Kubernetes Component
+
+Kubernetes memiliki beberapa fitur dan komponen yang harus diketahui terlebih dahulu sebelum kita memulai menggunakannnya.
 
 ### a. NODE vs POD vs CONTAINER
 
@@ -206,4 +230,102 @@ data:
   database_url: "jdbc:mysql://db.example.com:3306/mydatabase"
   database_user: "user123"
   database_password: "password123"
+```
+
+### Secret
+
+Secret adalah salah satu fitur kubernetes yang sangat penting. Fungsinya adalah untuk menyimpan data-data/variable yang dibutuhkan oleh semua pods namun bersifat rahasia.
+
+Misalkan kita ingin agar pods kita dapat mengakses pods database. Agar pods dapat mengakses database tentu saja perlu kredensial bukan? dengan menggunakan fitur secret ini, kredensial dapat di enkripsi sehingga tidak dapat dengan mudah diketahui oleh yang tidak berkepentingan.
+
+Contoh konfigurasinya adalah sebagai berikut:
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+data:
+  mongo-user: bW9uZ291c2Vy
+  mongo-password: bW9uZ29wYXNzd2Q=
+```
+Disini, kita setup aplikasi kita untuk bisa mengakses database dengan menggunakan kredensial berikut. Kredesial harus ditulis dengan di encode ke base64 sehingga fitur dapat bekerja.
+
+
+### Load Balancer
+
+Untuk mensetup load balancer khusus untuk sistem kubernetes kita dapat menggunakan konfigurasi berikut:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+```
+Dalam contoh ini, aplikasi yang digunakan adalah nginx. Jika kalian menggunakan aplikasi lain (misalnya apache2) kalian bisa membaca dokumentasi aplikasi tersebut untuk mendeploy Load Balancer menggunakan aplikasi tersebut.
+
+### Deployment
+
+Terakhir, berikut adalah contoh konfigurasi untuk mendeploy aplikasi nginx:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+```
+Note:  **Setiap aplikasi bisa jadi memiliki konfigurasi yang berbeda, selalu cek konfigurasi aplikasi tersebut untuk menggunakannya dengan kubernetes**.
+
+Untuk konfigurasi di atas, kita akan mendeploy aplikasi 3 aplikasi nginx sekaligus (dari variable **replicas**) dan di setiap pods nya, nginx dapat di akses di port 80.
+
+Agar kita dapat mengakses nginx, kita akan mengakses via port 30080 yang nantinya akan di forward oleh kubernetes ke port 80 aplikasi nginx.
+
+### Aplikasikan konfigurasi ke kubernetes
+
+Lalu, kita akan menjalankan command berikut untuk mengaplikasikan konfigurasi-konfigurasi yang kita buat ke kubernetes:
+```
+kubectl apply -f config.yaml
+```
+Sebagai contoh, misal kita punya aplikasi yang memerlukan mongodb sebagai database (disimpan dalam file mongo.yaml), nginx sebagai web server(webapp.yaml), mongo-secret.yaml untuk menyimopan kredensial, dan mongo-config.yaml untuk menyimpan configurasi. Maka untuk mendeploynya kita perlu command-command berikut:
+```
+kubectl apply -f webapp.yaml
+kubectl apply -f mongo.yaml
+kubectl apply -f mongo-config.yaml
+kubectl apply -f mongo-secret.yaml
 ```
