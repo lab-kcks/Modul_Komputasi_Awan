@@ -215,6 +215,8 @@ spec:
                 port:
                   number: 80
 ```
+Untuk melihat type service yang dijalankan, kita dapat menggunakan command `kubectl get service` atau `kubectl get svc`
+
 ### c. ConfigMap
 
 ConfigMap adalah objek Kubernetes yang digunakan untuk menyimpan data konfigurasi dalam bentuk pasangan `key: value`. ConfigMap memungkinkan untuk memisahkan konfigurasi aplikasi dari kode aplikasi, sehingga mempermudah manajemen konfigurasi dan memperbaiki praktik deployment.
@@ -328,4 +330,150 @@ kubectl apply -f webapp.yaml
 kubectl apply -f mongo.yaml
 kubectl apply -f mongo-config.yaml
 kubectl apply -f mongo-secret.yaml
+```
+
+## Contoh Project
+
+Kali ini, kita akan mencoba mendeploy nginx menggunakan kubernetes.
+
+Pertama, jalankan minikube
+```
+minikube start
+```
+Jalankan command berikut untuk memastikan bahwa minikube sudah menjadi nodes
+```
+kubectl get nodes
+```
+Output yang benar adalah
+```
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   14h   v1.30.0
+```
+Setelah minikube berhasil dijalankan, buatlah file dengan nama `nginx.yaml` yang berisi
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+```
+Ketika code tersebut dijalankan, maka nginx akan dideploy dengan nama nginx-deployment, dan replica yang dibuat adalah tiga. Nginx yang dideploy diambil dari container/image: nginx:1.14.2
+
+Selain itu, akan ada service yang dibuat juga dengan nama nginx-service, di mana ini adalah external service type NodePort yang menggunakan `nodePort: 30080`
+
+Ketika nginx berhasil dideploy, maka nginx akan dapat diakses melalui url `<minikube-ip>:<nodePort>`
+
+Langkah selanjutnya, adalah menjalankan command kubectl apply
+```
+kubectl apply -f nginx.yaml
+```
+Outputnya akan seperti ini
+```
+deployment.apps/nginx-deployment created
+service/nginx-service created
+```
+Untuk melihat pods yang berhasil dibuat, jalankan command berikut
+```
+kubectl get pods
+```
+Output akan menampilkan seluruh pods yang ada seperti ini
+```
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-77d8468669-4cplg   1/1     Running   0          61s
+nginx-deployment-77d8468669-czbsp   1/1     Running   0          61s
+nginx-deployment-77d8468669-sdbjx   1/1     Running   0          61s
+```
+Untuk melihat deployment yang dilakukan, jalankan command
+```
+kubectl get deployments
+```
+Output akan menampilkan seluruh deployment seperti ini
+```
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3/3     3            3           11m
+```
+Untuk melihat service yang ada, jalankan command
+```
+kubectl get svc 
+```
+Output akan menampilan service yang tersedia seperti ini
+```
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP        14h
+nginx-service   NodePort    10.109.223.72   <none>        80:30080/TCP   12m
+```
+Kita juga dapat melihat semuanya sekaligus menggunakan command
+```
+kubectl get all
+```
+Outputnya akan memunculkan seperti berikut
+```
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/nginx-deployment-77d8468669-4cplg   1/1     Running   0          16m
+pod/nginx-deployment-77d8468669-czbsp   1/1     Running   0          16m
+pod/nginx-deployment-77d8468669-sdbjx   1/1     Running   0          16m
+
+NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP        14h
+service/nginx-service   NodePort    10.109.223.72   <none>        80:30080/TCP   16m
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-deployment   3/3     3            3           16m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-deployment-77d8468669   3         3         3       16m
+```
+Setelah memastikan semuanya sudah ada dan berjalan dengan lancar, kita coba mengakses url untuk memastikan apakah nginx sudah berhasil dideploy
+
+Karena kita menggunakan external service NodePort, maka url akan diakses melalui `<minikube-ip>:<nodeport>`
+
+Jalankan command `minikube ip` untuk mendapatkan alamat IP minikube. Selain itu kita juga dapat menjalankan command `kubectl get nodes -o wide` dan mendapatkan ip nya dari kolom INTERNAL-IP
+
+nodePort dapat dilihat pada service, 
+```
+NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/nginx-service   NodePort    10.109.223.72   <none>        80:30080/TCP   16m
+```
+maka nodePort nya adalah 30080
+
+Url akan mengarahkan ke halaman website yang menampilkan **Welcome to nginx!**
+
+Note:
+
+| **Known issue - Minikube IP not accessible**
+
+Jika kalian tidak bisa mengakses url tersebut, coba jalankan command berikut:
+```
+minikube service nginx-service
 ```
