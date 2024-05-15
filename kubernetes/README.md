@@ -23,6 +23,11 @@ Biasanya, sistem yang menggunakan kubernetes memiliki struktur sebagai berikut:
 ![Struktur Sistem Kubernetes](/kubernetes/struktur-kubernetes.png)
 
 
+# Load Balancer (dikit doang)
+
+Misalkan kalian buat 1000 website yang masing di deploy di 1000 docker. Nah, ketika user mau mengakses website kita, dia akan di arahkan ke salah satu website. Yang bertugas mengarahkan tersebut adalah Load Balancer ini. Jadinya jika salah satu website sudah overload/teralu banyak orang yang mengaksesnya, Load Balancer akan mengarahkan user yang baru ke website backup sehingga user tidak mengalami penurunan performa dalam menggunakan website.
+
+
 ## Setup Kubernetes (Minikube)
 
 ### a. Prerequisite
