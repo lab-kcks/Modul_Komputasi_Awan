@@ -114,6 +114,10 @@ Jika sudah terinstal, maka outputnya adalah:
 Client Version: v1.30.0
 Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
 ```
+
+Jika kubectl belum terinstal, ikuti instalasi kubectl pada dokumentasi berikut: 
+https://kubernetes.io/docs/tasks/tools/#kubectl
+
 ## Main Kubernetes Component
 
 Kubernetes memiliki beberapa fitur dan komponen yang harus diketahui terlebih dahulu sebelum kita memulai menggunakannnya.
