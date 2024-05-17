@@ -332,6 +332,13 @@ kubectl apply -f mongo-config.yaml
 kubectl apply -f mongo-secret.yaml
 ```
 
+### Mengakses Container
+
+Setelah mendeploy, tentunya kadang-kadang kita perlu untuk mengkonfigurasi container tersebut. Untuk mengakses Shell kontainer tersebut agar bisa di konfigurasikan, jalankan:
+```
+kubectl exec -it [[Nama_Pods]] -- /bin/bash
+```
+
 ### Matikan mesin
 
 Untuk mematikan sistem minikube, dapat menggunakan command:
@@ -505,6 +512,78 @@ Note:
 Jika kalian tidak bisa mengakses url tersebut, coba jalankan command berikut:
 ```
 minikube service nginx-service
+```
+
+## Tips-Tips
+
+### 1. Pakai Docker Image untuk mendeploy website
+
+Ketika kalian ingin mendeploy website dengan metode kubernetes ini, **sangat disarankan untuk menggunakan docker image yang sudah dikonfigurasikan untuk mendeploy website kalian** dibandingkan membuat konfigurasi dari file konfigurasi
+
+Untuk step-stepnya sebagai berikut:
+
+Contohnya ini mendeploy website dengan NGINX. 
+
+Setup dockerfile, nama bebas (kalau ini pakai nama `dockerfile`):
+```
+FROM nginx:latest
+COPY ./web/ /var/www/html/
+COPY ./web/nginx.conf /etc/nginx/nginx.conf
+```
+
+Buat folder web, didalamnya buat baru html website kalian
+Didalam folder web itu juga kalau bisa file-file yang diperlukan untuk konfigurasi. (contohnya disini konfigurasi nginx.conf)
+
+Jalanin command berikut:
+```
+eval ($minikube docker-env)
+```
+Ini agar ketika kalian build docker image kalian, docker image tersebut bisa di akses oleh minikube
+
+Jalankan command berikut:
+```
+docker build -f dockerfile -t web .
+```
+Ini agar docker imagenya di buat. Untuk `web` bisa di ganti ke nama docker image yang kalian inginkan. 
+
+Lalu, untuk konfigurasi kubernetes nya sebagai berikut (ku simpan di file nginx.yaml):
+```
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-web
+  labels:
+    app: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: web:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-web
+spec:
+  type: NodePort
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30420
 ```
 
 ## Soal Asistensi
