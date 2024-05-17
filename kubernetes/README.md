@@ -521,6 +521,9 @@ Jika kalian tidak bisa mengakses url tersebut, coba jalankan command berikut:
 minikube service nginx-service
 ```
 
+Seharusnya, ketika mengakses `http://[minkubeIP]:[NodePort]/index.html` akan menghasilkan output seperti ini:
+![alt text](./images/output.png)
+
 ## Tips-Tips
 
 ### 1. Pakai Docker Image untuk mendeploy website
