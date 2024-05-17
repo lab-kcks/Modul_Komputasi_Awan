@@ -20,7 +20,7 @@ Kubernetes lah solusinya. Dengan kubernetes kita dapat mengotomatisasi deploymen
 
 Biasanya, sistem yang menggunakan kubernetes memiliki struktur sebagai berikut:
 
-![Struktur Sistem Kubernetes](/kubernetes/struktur-kubernetes.png)
+![Struktur Sistem Kubernetes](./images/struktur-kubernetes.png)
 
 
 ## Load Balancer (dikit doang)
@@ -552,6 +552,9 @@ Jalankan command berikut:
 docker build -f dockerfile -t web .
 ```
 Ini agar docker imagenya di buat. Untuk `web` bisa di ganti ke nama docker image yang kalian inginkan. 
+
+Berikut contoh outputnya:
+![output-build](./images/output-build.png)
 
 Lalu, untuk konfigurasi kubernetes nya sebagai berikut (ku simpan di file nginx.yaml):
 ```
