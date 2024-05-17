@@ -23,6 +23,11 @@ Biasanya, sistem yang menggunakan kubernetes memiliki struktur sebagai berikut:
 ![Struktur Sistem Kubernetes](/kubernetes/struktur-kubernetes.png)
 
 
+# Load Balancer (dikit doang)
+
+Misalkan kalian buat 1000 website yang masing di deploy di 1000 docker. Nah, ketika user mau mengakses website kita, dia akan di arahkan ke salah satu website. Yang bertugas mengarahkan tersebut adalah Load Balancer ini. Jadinya jika salah satu website sudah overload/teralu banyak orang yang mengaksesnya, Load Balancer akan mengarahkan user yang baru ke website backup sehingga user tidak mengalami penurunan performa dalam menggunakan website.
+
+
 ## Setup Kubernetes (Minikube)
 
 ### a. Prerequisite
@@ -109,6 +114,10 @@ Jika sudah terinstal, maka outputnya adalah:
 Client Version: v1.30.0
 Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
 ```
+
+Jika kubectl belum terinstal, ikuti instalasi kubectl pada dokumentasi berikut: 
+https://kubernetes.io/docs/tasks/tools/#kubectl
+
 ## Main Kubernetes Component
 
 Kubernetes memiliki beberapa fitur dan komponen yang harus diketahui terlebih dahulu sebelum kita memulai menggunakannnya.
@@ -424,13 +433,11 @@ spec:
       targetPort: 80
       nodePort: 30080
 ```
-Ketika code tersebut dijalankan, maka nginx akan dideploy dengan nama nginx-deployment, dan replica yang dibuat adalah tiga. Nginx yang dideploy diambil dari container/image: nginx:1.14.2
-
-Selain itu, akan ada service yang dibuat juga dengan nama nginx-service, di mana ini adalah external service type NodePort yang menggunakan `nodePort: 30080`
+Ketika code tersebut dijalankan, makan akan terbuat nginx-deployment dan nginx-service, service nya adalah external service type NodePort yang menggunakan `nodePort: 30080`
 
 Ketika nginx berhasil dideploy, maka nginx akan dapat diakses melalui url `<minikube-ip>:<nodePort>`
 
-Langkah selanjutnya, adalah menjalankan command kubectl apply
+Langkah selanjutnya, adalah menjalankan command kubectl apply untuk melakukan deploy
 ```
 kubectl apply -f nginx.yaml
 ```
@@ -588,4 +595,5 @@ spec:
 
 ## Soal Asistensi
 
-Deploy aplikasi Apache2 dan set agar bisa di akses via port 30420.
+1. Lakukan deploy aplikasi Apache2 dan set agar bisa di akses via port 30420.
+2. Tunjukkan seluruh pods, deployment, dan juga service yang berjalan. Hapus yang berhubungan dengan deploy apache di soal nomor 1.
