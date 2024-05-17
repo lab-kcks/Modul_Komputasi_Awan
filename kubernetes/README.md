@@ -23,7 +23,7 @@ Biasanya, sistem yang menggunakan kubernetes memiliki struktur sebagai berikut:
 ![Struktur Sistem Kubernetes](/kubernetes/struktur-kubernetes.png)
 
 
-# Load Balancer (dikit doang)
+## Load Balancer (dikit doang)
 
 Misalkan kalian buat 1000 website yang masing di deploy di 1000 docker. Nah, ketika user mau mengakses website kita, dia akan di arahkan ke salah satu website. Yang bertugas mengarahkan tersebut adalah Load Balancer ini. Jadinya jika salah satu website sudah overload/teralu banyak orang yang mengaksesnya, Load Balancer akan mengarahkan user yang baru ke website backup sehingga user tidak mengalami penurunan performa dalam menggunakan website.
 
@@ -593,7 +593,54 @@ spec:
       nodePort: 30420
 ```
 
+Lalu, jalankan command ini:
+```
+kubectl apply -f nginx.yaml
+```
+
+Selamat, seharusnya website sudah di deploy dan bisa di akses dengan:
+```
+minikube service service-web
+```
+
+**P.S Konfigurasi Nginx nya cari sendiri ya. Terus, itu lokasi konfigurasinya (/etc/nginx/nginx.conf) itu juga salah, cari sendiri ya lokasinya yang bener ;)**
+
+### 2. Edit file di container tanpa file editor
+
+Terkadang, kita ingin mengkonfigurasi mesin. Namun dalam kasus docker ini, mesin biasanya tidak memiliki file editor. Untuk itu, agar bisa mengeditnya dapat menggunakan cara berikut:
+
+Buat isi file yang ingin kita edit. Contohnya disini, aku ingin mengedit `index.html`, sebelumnya dia berisi ini:
+```
+<html>
+    <body>
+        <h1>Test, jalan ato nggak ini</h1>
+    </body>
+</html>
+```
+Dan ingin ku edit menjadi:
+```
+<html>
+    <body>
+        <h1>Test, jalan ato nggak ini</h1>
+        <h1>Wah, jalan juga ternyata</h1>
+    </body>
+</html>
+```
+
+Maka, kita bisa menajalankan command ini di terminal:
+```
+cat << 'EOF' > ./index.html
+<html>
+    <body>
+        <h1>Test, jalan ato nggak ini</h1>
+        <h1>Wah, jalan juga ternyata</h1>
+    </body>
+</html>
+EOF
+```
+Dengan ini, file `index.html` akan berubah.
+
 ## Soal Asistensi
 
-1. Lakukan deploy aplikasi Apache2 dan set agar bisa di akses via port 30420.
+1. Lakukan deploy aplikasi Apache2. Image apachenya bebas, namun di sarankan dengan menggunakan image `ubuntu/apache2` dan set agar bisa di akses via port 30420.
 2. Tunjukkan seluruh pods, deployment, dan juga service yang berjalan. Hapus yang berhubungan dengan deploy apache di soal nomor 1.
